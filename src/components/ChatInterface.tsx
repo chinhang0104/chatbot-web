@@ -12,13 +12,15 @@ interface ChatInterfaceProps {
   messages: Message[];
   onMessagesUpdate: (messages: Message[]) => void;
   onThreadUpdate: (threadId: string, title: string, lastMessage: string) => void;
+  onNewThread: (firstMessageContent: string) => void;
 }
 
 export default function ChatInterface({
   threadId,
   messages,
   onMessagesUpdate,
-  onThreadUpdate
+  onThreadUpdate,
+  onNewThread,
 }: ChatInterfaceProps) {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -49,28 +51,13 @@ export default function ChatInterface({
     scrollToBottom();
   }, [messages, intermediateMessages]);
 
-  const handleSendMessage = async () => {
-    if (!inputValue.trim() || !threadId || isLoading) return;
+  const initiateAIResponse = (question: string, currentMessages: Message[]) => {
+    if (!threadId) return;
 
-    const userMessage: Message = {
-      id: uuidv4(),
-      content: inputValue.trim(),
-      role: 'user',
-      timestamp: new Date()
-    };
-
-    // Add user message
-    const updatedMessages = [...messages, userMessage];
-    onMessagesUpdate(updatedMessages);
-    storageUtils.addMessage(threadId, userMessage);
-
-    const question = inputValue.trim();
-    setInputValue('');
     setIsLoading(true);
     setIntermediateMessages([]);
     intermediateMessagesRef.current = [];
 
-    // Create WebSocket connection
     wsRef.current = new ChatWebSocket(
       (message: string, isIntermediate: boolean) => {
         if (isIntermediate) {
@@ -98,7 +85,7 @@ export default function ChatInterface({
             intermediateMessages: intermediateMessagesRef.current
           };
 
-          const finalMessages = [...updatedMessages, assistantMessage];
+          const finalMessages = [...currentMessages, assistantMessage];
           onMessagesUpdate(finalMessages);
           storageUtils.addMessage(threadId, assistantMessage);
           
@@ -123,13 +110,38 @@ export default function ChatInterface({
           timestamp: new Date()
         };
 
-        const finalMessages = [...updatedMessages, errorMessage];
+        const finalMessages = [...currentMessages, errorMessage];
         onMessagesUpdate(finalMessages);
         storageUtils.addMessage(threadId, errorMessage);
       }
     );
 
     wsRef.current.connect(question, 'user-123', threadId);
+  };
+
+  useEffect(() => {
+    if (threadId && messages.length === 1 && messages[0].role === 'user' && !isLoading) {
+      initiateAIResponse(messages[0].content, messages);
+    }
+  }, [threadId, messages]);
+
+  const handleSendMessage = async () => {
+    if (!inputValue.trim() || !threadId || isLoading) return;
+
+    const question = inputValue.trim();
+    const userMessage: Message = {
+      id: uuidv4(),
+      content: question,
+      role: 'user',
+      timestamp: new Date()
+    };
+
+    const updatedMessages = [...messages, userMessage];
+    onMessagesUpdate(updatedMessages);
+    storageUtils.addMessage(threadId, userMessage);
+
+    setInputValue('');
+    initiateAIResponse(question, updatedMessages);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -141,15 +153,51 @@ export default function ChatInterface({
 
   if (!threadId) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-white dark:bg-gray-800">
+      <div className="flex-1 flex flex-col items-center justify-center bg-white dark:bg-gray-800 p-4">
         <div className="text-center">
           <Bot className="w-16 h-16 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
             Welcome to AI Chatbot
           </h3>
-          <p className="text-gray-500 dark:text-gray-400">
+          <p className="text-gray-500 dark:text-gray-400 mb-8">
             Select a conversation or start a new one to begin chatting
           </p>
+        </div>
+        <div className="w-full max-w-3xl">
+          <div className="border-t border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-800">
+            <div className="flex gap-2">
+              <textarea
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    if (inputValue.trim()) {
+                      onNewThread(inputValue.trim());
+                      setInputValue('');
+                    }
+                  }
+                }}
+                placeholder="Type your message to start..."
+                className="flex-1 resize-none rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white text-sm md:text-base"
+                rows={1}
+                disabled={isLoading}
+              />
+              <button
+                onClick={() => {
+                  if (inputValue.trim()) {
+                    onNewThread(inputValue.trim());
+                    setInputValue('');
+                  }
+                }}
+                disabled={!inputValue.trim() || isLoading}
+                className="px-3 md:px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg transition-colors flex items-center gap-2"
+              >
+                <Send className="w-4 h-4" />
+                <span className="hidden sm:inline">Send</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     );
