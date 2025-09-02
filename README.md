@@ -24,7 +24,8 @@ A modern, responsive chatbot web app built with Next.js, React, TypeScript, and 
 
 - Node.js 18+
 - npm, yarn, or pnpm
-- A backend WebSocket server at `ws://localhost:8001/ws/generate`
+- clone backend: `git clone https://github.com/chinhang0104/LangGraph-deploy`
+- Run WebSocket server at `ws://localhost:8001/ws/generate`
 
 ## Getting Started
 
