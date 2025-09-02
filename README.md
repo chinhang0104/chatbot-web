@@ -1,8 +1,53 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Chatbot Web Application
 
-## Getting Started
+A responsive, modern chatbot web application built with Next.js, TypeScript, and Tailwind CSS v4. Features real-time WebSocket communication, thread management, and smooth animations.
 
-First, run the development server:
+## Features
+
+- 🤖 **AI-Powered Conversations**: Real-time chat with AI assistant
+- 📱 **Responsive Design**: Works seamlessly across all devices
+- 🧵 **Thread Management**: Organize conversations with collapsible sidebar
+- ⚡ **Real-time Streaming**: WebSocket-based message streaming with intermediate responses
+- 🎨 **Modern UI**: Clean, intuitive interface with dark mode support
+- 💾 **Local Storage**: Persistent conversation history
+- 🔍 **SEO Optimized**: Proper meta tags and structured data
+- ✨ **Smooth Animations**: Collapse animations for message transitions
+
+## Tech Stack
+
+- **Frontend**: Next.js 15, React 19, TypeScript
+- **Styling**: Tailwind CSS v4
+- **Icons**: Lucide React
+- **WebSocket**: Native WebSocket API
+- **Storage**: LocalStorage for persistence
+- **UUID**: For unique thread generation
+
+## Prerequisites
+
+- Node.js 18+ 
+- npm, yarn, or pnpm
+- Backend server running on `localhost:8001` (WebSocket endpoint)
+
+## Installation
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd chatbot-app
+```
+
+2. Install dependencies:
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+```
+
+## Development
+
+Start the development server:
 
 ```bash
 npm run dev
@@ -10,27 +55,137 @@ npm run dev
 yarn dev
 # or
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Building for Production
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Build the application:
 
-## Learn More
+```bash
+npm run build
+# or
+yarn build
+# or
+pnpm build
+```
 
-To learn more about Next.js, take a look at the following resources:
+Start the production server:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm start
+# or
+yarn start
+# or
+pnpm start
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project Structure
 
-## Deploy on Vercel
+```
+src/
+├── app/
+│   ├── globals.css          # Global styles and animations
+│   ├── layout.tsx           # Root layout with SEO metadata
+│   └── page.tsx             # Main application page
+├── components/
+│   ├── Sidebar.tsx          # Collapsible sidebar with thread list
+│   └── ChatInterface.tsx    # Chat area with message display
+├── types/
+│   └── chat.ts              # TypeScript type definitions
+└── utils/
+    ├── storage.ts           # LocalStorage utilities
+    └── websocket.ts         # WebSocket connection management
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Backend Integration
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The application expects a WebSocket server running on `localhost:8001` with the following endpoint:
+
+- **WebSocket URL**: `ws://localhost:8001/ws/generate`
+- **Request Format**: 
+  ```json
+  {
+    "question": "string",
+    "user_id": "string", 
+    "thread_id": "string"
+  }
+  ```
+- **Response Format**:
+  ```json
+  {
+    "message": "string"
+  }
+  ```
+
+## Features in Detail
+
+### Thread Management
+- Create new conversation threads with unique IDs
+- View conversation history in collapsible sidebar
+- Delete threads with confirmation
+- Automatic thread title generation from first message
+
+### Real-time Messaging
+- WebSocket connection for real-time communication
+- Intermediate message display with "Checking on:" prefix
+- Smooth collapse animation when final response arrives
+- Fallback to last intermediate message if final is empty
+
+### Responsive Design
+- Desktop: Two-column layout with sidebar and chat area
+- Mobile: Single column with header and chat area
+- Collapsible sidebar for space optimization
+- Touch-friendly interface elements
+
+### SEO Optimization
+- Comprehensive meta tags
+- Open Graph and Twitter Card support
+- Structured data (JSON-LD)
+- Mobile web app capabilities
+- Canonical URLs
+
+## Customization
+
+### Styling
+Modify `src/app/globals.css` to customize:
+- Color schemes
+- Animations
+- Scrollbar styles
+- Transitions
+
+### WebSocket Configuration
+Update `src/utils/websocket.ts` to change:
+- WebSocket URL
+- Connection parameters
+- Message handling logic
+
+### Storage
+Modify `src/utils/storage.ts` to:
+- Change storage keys
+- Add data validation
+- Implement different storage backends
+
+## Browser Support
+
+- Chrome 88+
+- Firefox 85+
+- Safari 14+
+- Edge 88+
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License.
+
+## Support
+
+For support and questions, please open an issue in the repository.
