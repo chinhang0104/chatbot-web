@@ -21,7 +21,8 @@ export class ChatWebSocket {
 
   connect(question: string, userId: string, threadId: string): void {
     try {
-      this.ws = new WebSocket('ws://localhost:8001/ws/generate');
+      const wsUrl = process.env.WS_URL || 'ws://localhost:8001/ws/generate';
+      this.ws = new WebSocket(wsUrl);
       this.messageCount = 0;
       this.lastMessage = '';
       this.allMessages = [];

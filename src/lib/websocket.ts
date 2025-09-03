@@ -15,7 +15,8 @@ export class ChatWebSocket {
     this.closeCallback = onClose;
     this.errorCallback = onError;
 
-    this.ws = new WebSocket('ws://localhost:8001/ws/generate');
+    const wsUrl = process.env.WS_URL || 'ws://localhost:8001/ws/generate';
+    this.ws = new WebSocket(wsUrl);
     
     this.ws.onopen = () => {
       console.log('WebSocket connected');
