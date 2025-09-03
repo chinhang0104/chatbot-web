@@ -96,7 +96,10 @@ There is also `lib/websocket.ts`, a simplified client that streams messages with
 
 ## Backend Contract
 
-- **URL**: `ws://localhost:8001/ws/generate`
+- **URL**:
+Configurable via environment variable WS_URL.  
+Defaults to: `ws://localhost:8001/ws/generate` if WS_URL is not set.  
+Example .env entry: `WS_URL=ws://your-websocket-url-here`
 - **Request**:
   ```json
   {
@@ -114,7 +117,7 @@ The client emits a single request per user message and expects a sequence of JSO
 
 ## Configuration
 
-- WebSocket URL: update in `src/utils/websocket.ts` (and optionally `src/lib/websocket.ts`).
+- WebSocket URL: update in .env entry: `WS_URL=ws://your-websocket-url-here`.
 - SEO metadata and JSON‑LD: configured in `src/app/layout.tsx`.
 
 ## Customization
