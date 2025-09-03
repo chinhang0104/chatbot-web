@@ -1,6 +1,7 @@
 # AI Chatbot Web Application
 
-A modern, responsive chatbot web app built with Next.js, React, TypeScript, and Tailwind CSS v4. It features real-time streaming responses over WebSockets, conversation threads with persistence, and a clean, mobile-friendly UI.
+A modern, responsive chatbot web app built with Next.js, React, TypeScript, and Tailwind CSS v4. It features real-time streaming responses over WebSockets, conversation threads with persistence, and a clean, mobile-friendly UI.  
+Live demo on [vercel](https://chatbot-web-one-theta.vercel.app/)!
 
 ## Features
 
